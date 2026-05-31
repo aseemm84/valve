@@ -3,7 +3,7 @@ frontend/ui_user_guide.py  — In-App Step-by-Step User Guide
 """
 from __future__ import annotations
 import streamlit as st
-from frontend.ui_styles import DEVELOPER_NAME, GITHUB_URL, LINKEDIN_URL, section_header_html
+from frontend.ui_styles import DEVELOPER_NAME, GITHUB_URL, HANDBOOK_URL, LINKEDIN_URL, section_header_html
 
 
 def render_user_guide() -> None:
@@ -18,6 +18,34 @@ def render_user_guide() -> None:
         "Use the expanders below to navigate to the topic you need."
     )
 
+    # ── HANDBOOK LINK ─────────────────────────────────────────────────────────
+    from frontend.ui_styles import HANDBOOK_URL  # already imported at module level if added there
+    st.markdown(
+        f"""
+        <div style="background:#f0f7f0;border:1px solid #c3dfc3;border-left:5px solid #375623;
+                    border-radius:8px;padding:0.9rem 1.2rem;margin-bottom:1rem;">
+            <div style="font-size:1.05rem;font-weight:700;color:#375623;margin-bottom:0.3rem;">
+                📚 Control Valve Engineering Handbook
+            </div>
+            <div style="font-size:0.88rem;color:#2d4d2d;line-height:1.6;">
+                The companion handbook covers all equations, theory, constants, case studies,
+                and standards references behind this app — from first principles through
+                advanced cavitation, noise, and actuator sizing.
+            </div>
+            <div style="margin-top:0.6rem;">
+                <a href="{HANDBOOK_URL}" target="_blank"
+                   style="display:inline-flex;align-items:center;gap:0.4rem;
+                          background:#375623;color:#fff;text-decoration:none;
+                          border-radius:6px;padding:0.4rem 1rem;font-size:0.85rem;
+                          font-weight:600;">
+                    📖&nbsp;Open Handbook on GitHub &nbsp;↗
+                </a>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    
     # ── QUICK START ───────────────────────────────────────────────────────────
     with st.expander("🚀 Quick Start — 5 Steps to Your First Sizing", expanded=True):
         st.markdown(
