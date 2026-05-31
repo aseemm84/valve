@@ -101,7 +101,13 @@ def render_report_panel(result: SizingResult) -> None:
 # ---------------------------------------------------------------------------
 
 def _generate_pdf(result: SizingResult) -> bytes:
-    """Generate a PDF report. Raises ImportError if fpdf2 not installed."""
+    """Generate a PDF report. Raises ImportError if fpdf2 not installed.
+
+    All strings use only Latin-1 / ASCII characters because the built-in
+    Helvetica font in fpdf2 does not support Unicode code points > 255.
+    Unicode symbols (Delta, degree, eta, rho, sigma …) are replaced with
+    plain ASCII equivalents throughout.
+    """
     from fpdf import FPDF
 
     pdf = FPDF()
@@ -119,45 +125,50 @@ def _generate_pdf(result: SizingResult) -> bytes:
     pdf.set_text_color(0, 0, 0)
     pdf.set_font("Helvetica", "", 9)
     pdf.set_xy(10, 28)
-    pdf.cell(0, 5, f"Standard: IEC 60534-2-1:2011 / ISA-75.01.01-2012", ln=True)
-    pdf.cell(0, 5, f"Generated: {datetime.now().strftime('%d %b %Y %H:%M')} | {DEVELOPER_NAME}", ln=True)
+    pdf.cell(0, 5, "Standard: IEC 60534-2-1:2011 / ISA-75.01.01-2012", ln=True)
+    pdf.cell(
+        0, 5,
+        f"Generated: {datetime.now().strftime('%d %b %Y %H:%M')} | {DEVELOPER_NAME}",
+        ln=True,
+    )
     pdf.ln(3)
 
     # ── Tag / case identification ────────────────────────────────────────────
     _pdf_section(pdf, "Instrument Identification")
-    _pdf_row(pdf, "Tag Number", result.tag_number or "—")
-    _pdf_row(pdf, "Case Name", result.case_name or "—")
+    _pdf_row(pdf, "Tag Number", result.tag_number or "-")
+    _pdf_row(pdf, "Case Name",  result.case_name  or "-")
     _pdf_row(pdf, "Fluid Phase", result.fluid_phase.value)
     pdf.ln(2)
 
     # ── Primary results ──────────────────────────────────────────────────────
     _pdf_section(pdf, "Primary Sizing Results")
     if result.Cv_required:
-        _pdf_row(pdf, "Cv Required", f"{result.Cv_required:.4f}")
+        _pdf_row(pdf, "Cv Required",               f"{result.Cv_required:.4f}")
     if result.Cv_margin:
-        _pdf_row(pdf, "Cv with Margin", f"{result.Cv_margin:.4f}")
+        _pdf_row(pdf, "Cv with Margin",            f"{result.Cv_margin:.4f}")
     if result.Kv_required:
-        _pdf_row(pdf, "Kv Required", f"{result.Kv_required:.4f}")
+        _pdf_row(pdf, "Kv Required",               f"{result.Kv_required:.4f}")
     if result.sizing_ratio:
         _pdf_row(pdf, "Sizing Ratio (Cv_req/Cv_rated)", f"{result.sizing_ratio:.4f}")
     if result.opening_pct:
-        _pdf_row(pdf, "Estimated Opening", f"{result.opening_pct:.1f} %")
-    _pdf_row(pdf, "Flow Regime", result.flow_regime)
-    _pdf_row(pdf, "Choked Flow", "YES" if result.is_choked else "No")
+        _pdf_row(pdf, "Estimated Opening",         f"{result.opening_pct:.1f} %")
+    _pdf_row(pdf, "Flow Regime",  result.flow_regime)
+    _pdf_row(pdf, "Choked Flow",  "YES" if result.is_choked else "No")
     pdf.ln(2)
 
     # ── Process conditions ───────────────────────────────────────────────────
     _pdf_section(pdf, "Process Conditions")
     if result.P1_bar:
-        _pdf_row(pdf, "P1 (Inlet, absolute)", f"{result.P1_bar:.4f} bar a")
+        _pdf_row(pdf, "P1 Inlet (absolute)",       f"{result.P1_bar:.4f} bar a")
     if result.P2_bar:
-        _pdf_row(pdf, "P2 (Outlet, absolute)", f"{result.P2_bar:.4f} bar a")
+        _pdf_row(pdf, "P2 Outlet (absolute)",      f"{result.P2_bar:.4f} bar a")
     if result.P1_bar and result.P2_bar:
-        _pdf_row(pdf, "ΔP Available", f"{result.P1_bar - result.P2_bar:.4f} bar")
+        _pdf_row(pdf, "dP Available",              f"{result.P1_bar - result.P2_bar:.4f} bar")
     if result.T1_K:
-        _pdf_row(pdf, "T1 (Inlet)", f"{result.T1_K - 273.15:.1f} °C ({result.T1_K:.2f} K)")
+        _pdf_row(pdf, "T1 Inlet",
+                 f"{result.T1_K - 273.15:.1f} degC ({result.T1_K:.2f} K)")
     if result.rho1_kgm3:
-        _pdf_row(pdf, "ρ1 (Inlet Density)", f"{result.rho1_kgm3:.4f} kg/m³")
+        _pdf_row(pdf, "rho1 Inlet Density",        f"{result.rho1_kgm3:.4f} kg/m3")
     pdf.ln(2)
 
     # ── Noise ────────────────────────────────────────────────────────────────
@@ -165,16 +176,17 @@ def _generate_pdf(result: SizingResult) -> bytes:
         _pdf_section(pdf, "Noise Analysis")
         n = result.noise
         _pdf_row(pdf, "Lpe (External SPL at 1 m)", f"{n.overall_Lpe_dba:.1f} dB(A)")
-        _pdf_row(pdf, "Site Noise Limit", f"{n.limit_dba:.0f} dB(A)")
-        _pdf_row(pdf, "Status", "EXCEEDS LIMIT" if n.exceeds_limit else "Within limit")
+        _pdf_row(pdf, "Site Noise Limit",           f"{n.limit_dba:.0f} dB(A)")
+        _pdf_row(pdf, "Status",
+                 "EXCEEDS LIMIT" if n.exceeds_limit else "Within limit")
         if n.Lpi_db:
             _pdf_row(pdf, "Lpi (Internal Sound Power)", f"{n.Lpi_db:.1f} dB re 1pW")
         if n.TL_db:
-            _pdf_row(pdf, "TL (Transmission Loss)", f"{n.TL_db:.1f} dB")
+            _pdf_row(pdf, "TL (Transmission Loss)",    f"{n.TL_db:.1f} dB")
         if n.Mvc:
-            _pdf_row(pdf, "Mvc (Mach at VC)", f"{n.Mvc:.4f}")
+            _pdf_row(pdf, "Mvc (Mach at VC)",          f"{n.Mvc:.4f}")
         if n.eta_acoustic:
-            _pdf_row(pdf, "η_a (Acoustic Efficiency)", f"{n.eta_acoustic:.3e}")
+            _pdf_row(pdf, "eta_a (Acoustic Efficiency)", f"{n.eta_acoustic:.3e}")
         pdf.ln(2)
 
     # ── Warnings ─────────────────────────────────────────────────────────────
@@ -183,11 +195,11 @@ def _generate_pdf(result: SizingResult) -> bytes:
         for v in result.hard_violations:
             pdf.set_text_color(192, 0, 0)
             pdf.set_font("Helvetica", "B", 9)
-            pdf.cell(0, 5, f"[HARD] {v}", ln=True)
+            pdf.cell(0, 5, _ascii(f"[HARD] {v}"), ln=True)
         for w in result.warnings:
             pdf.set_text_color(127, 96, 0)
             pdf.set_font("Helvetica", "", 9)
-            pdf.cell(0, 5, f"[WARN] {w}", ln=True)
+            pdf.cell(0, 5, _ascii(f"[WARN] {w}"), ln=True)
         pdf.set_text_color(0, 0, 0)
         pdf.ln(2)
 
@@ -195,9 +207,56 @@ def _generate_pdf(result: SizingResult) -> bytes:
     pdf.set_y(-20)
     pdf.set_font("Helvetica", "I", 8)
     pdf.set_text_color(100, 100, 100)
-    pdf.cell(0, 5, f"Control Valve Sizer | {LINKEDIN_URL} | {GITHUB_URL}", ln=True, align="C")
+    pdf.cell(0, 5,
+             f"Control Valve Sizer v2.0 | {LINKEDIN_URL} | {GITHUB_URL}",
+             ln=True, align="C")
 
     return bytes(pdf.output())
+
+
+def _ascii(text: str) -> str:
+    """
+    Strip / replace Unicode characters that are outside the Latin-1 range
+    supported by fpdf2's built-in Helvetica font.
+
+    Common engineering symbols and their ASCII replacements:
+        Delta/delta  → d
+        degree       → deg
+        eta          → eta
+        rho          → rho
+        sigma        → sigma
+        mu           → mu
+        ≤ / ≥        → <= / >=
+        → / ←        → ->  / <-
+        m³           → m3
+        kg/m³        → kg/m3
+        °C / °F      → degC / degF
+        —  (em-dash) → -
+    """
+    replacements = {
+        "Δ": "d",  "δ": "d",
+        "°": "deg",
+        "η": "eta",
+        "ρ": "rho",
+        "σ": "sigma",
+        "μ": "mu",
+        "γ": "gamma",
+        "≤": "<=", "≥": ">=",
+        "→": "->", "←": "<-",
+        "³": "3",  "²": "2",
+        "½": "1/2",
+        "—": "-",  "–": "-",
+        "×": "x",
+        "±": "+/-",
+        "\u2019": "'",  # right single quotation mark
+        "\u2018": "'",  # left single quotation mark
+        "\u201c": '"',  # left double quotation mark
+        "\u201d": '"',  # right double quotation mark
+    }
+    for src, dst in replacements.items():
+        text = text.replace(src, dst)
+    # Final guard: drop any remaining non-latin1 characters
+    return text.encode("latin-1", errors="replace").decode("latin-1")
 
 
 def _pdf_section(pdf, title: str) -> None:
