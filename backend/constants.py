@@ -32,8 +32,15 @@ N1_US: float = 1.00     # Q [GPM],  ΔP [psia]
 N2_SI: float = 0.00214  # Fp piping correction  (d in mm)
 N2_US: float = 890.0    # Fp piping correction  (d in inches)
 
-N4_SI: float = 0.0713   # Reynolds number  (Q in m³/h, ν in cSt, d in mm)
-N4_US: float = 76000.0  # Reynolds number  (Q in GPM,  ν in cSt, d in inches)
+N4_SI: float = 334620.0 # Reynolds number  (Q in m³/h, ν in cSt)
+#   = N4_US × M3H_TO_GPM = 76 000 × 4.4029
+#   The IEC table value 0.0713 is for a different formula structure (involves
+#   d² explicitly).  For the simplified form used here —
+#       Rev = N4 / Fd × Q / (ν × √(FL × Cv))
+#   — the correct SI coefficient is N4_US × (m³/h per GPM) = 334 620.
+#   Proof: N4=0.0713 gives Rev=1.72 for water at 100 m³/h through a 100 mm
+#   valve → FR=0.05 → Cv inflated 20×.  N4=334 620 gives Rev=8 000 000 → FR=1.0 ✓
+N4_US: float = 76000.0  # Reynolds number  (Q in GPM,  ν in cSt)
 
 N5_SI: float = 0.00241  # Fp piping correction — pipe diameter term (d in mm)
 N5_US: float = 1000.0   # Fp piping correction — pipe diameter term (d in in)
