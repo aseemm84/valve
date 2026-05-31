@@ -23,6 +23,7 @@ DEVELOPER_NAME: str  = "Aseem Mehrotra"
 LINKEDIN_URL: str    = "https://www.linkedin.com/in/aseem-mehrotra/"
 GITHUB_URL: str      = "https://github.com/aseemm84/valve"
 APP_URL: str         = "https://sizing.streamlit.app/"
+HANDBOOK_URL: str    = "https://github.com/aseemm84/valve/blob/main/control%20valve%20design.md"
 APP_VERSION: str     = "2.0.0"
 
 # ── Colour palette ─────────────────────────────────────────────────────────
@@ -353,6 +354,13 @@ def app_header_html() -> str:
             <span class="badge">ISA-75.01</span>
             <span class="badge">IAPWS-IF97</span>
             <span class="badge">ASME B16.34</span>
+            <a href="{HANDBOOK_URL}" target="_blank"
+               style="display:inline-flex;align-items:center;gap:0.4rem;
+                      background:#375623;color:#fff;text-decoration:none;
+                      border-radius:6px;padding:0.45rem 0.9rem;font-size:0.82rem;
+                      font-weight:600;">
+                📚&nbsp;Engineering Handbook
+            </a>
             <a href="{LINKEDIN_URL}" target="_blank" class="linkedin-badge">
                 {linkedin_svg}&nbsp;{DEVELOPER_NAME}
             </a>
@@ -428,6 +436,13 @@ def render_footer() -> None:
                 Implements IEC 60534-2-1:2011, ISA-75.01.01, IEC 60534-8-3/8-4, IAPWS-IF97
             </div>
             <div class="right">
+                <a href="{HANDBOOK_URL}" target="_blank"
+                   style="display:inline-flex;align-items:center;gap:0.35rem;
+                          background:#375623;color:#fff;text-decoration:none;
+                          border-radius:5px;padding:0.3rem 0.7rem;font-size:0.78rem;
+                          font-weight:600;">
+                    📚 Handbook
+                </a>
                 <a href="{LINKEDIN_URL}" target="_blank"
                    style="display:inline-flex;align-items:center;gap:0.35rem;
                           background:{LINKEDIN_BLUE};color:#fff;text-decoration:none;
