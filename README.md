@@ -136,8 +136,8 @@ Comparison Table, Standards Reference, Troubleshooting, About.
 
 ```bash
 # 1. Clone
-git clone https://github.com/aseemm84/Control-Valve.git
-cd Control-Valve
+git clone https://github.com/aseemm84/valve.git
+cd valve
 
 # 2. Create virtual environment (recommended)
 python -m venv .venv
@@ -165,7 +165,7 @@ pytest tests/ -v
 ## 🗂 Directory Structure
 
 ```
-Control-Valve/
+valve/
 ├── app.py                        ← Streamlit entry point (13-tab layout)
 ├── requirements.txt              ← Production dependencies
 ├── requirements-dev.txt          ← Dev/test dependencies
