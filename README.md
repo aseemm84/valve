@@ -9,7 +9,7 @@ standards for liquid, gas, and steam service. Built with Python and Streamlit.
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Aseem%20Mehrotra-0077B5?logo=linkedin)](https://www.linkedin.com/in/aseem-mehrotra/)
 
-> **Live App:** [control-valve-sizing.streamlit.app](https://control-valve-sizing.streamlit.app/)
+> **Live App:** [https://sizing.streamlit.app/](https://sizing.streamlit.app/)
 > **Developer:** [Aseem Mehrotra](https://www.linkedin.com/in/aseem-mehrotra/)
 
 ---
@@ -297,8 +297,8 @@ MIT Licence — see [LICENSE](LICENSE).
 
 **Aseem Mehrotra**
 - 🔗 [LinkedIn](https://www.linkedin.com/in/aseem-mehrotra/)
-- 💻 [GitHub](https://github.com/aseemm84/Control-Valve)
-- 🌐 [Live App](https://control-valve-sizing.streamlit.app/)
+- 💻 [GitHub](https://github.com/aseemm84/valve)
+- 🌐 [Live App](https://sizing.streamlit.app/)
 
 ---
 
