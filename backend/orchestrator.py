@@ -342,9 +342,11 @@ def _normalise_flow(inputs: SizingInputs, rho1: float) -> tuple[float, float]:
         W_kgh = q
         Q_m3h = W_kgh / rho1 if rho1 > 0 else q
     elif basis == FlowBasis.STANDARD:
-        # Standard volumetric (Nm³/h at 0°C, 1 atm) → actual m³/h
-        rho_std = (inputs.P1_bara * 1e5 * inputs.molecular_weight) / (
-            8314.46 * 273.15 * inputs.compressibility_Z
+        # Standard volumetric (Nm³/h at 0 °C, 1.01325 bar) → mass flow kg/h
+        # rho_std MUST use standard conditions (P_std, T_std), NOT actual P1.
+        # Bug: using P1_bara here inflates rho_std by P1/P_std ≈ 25× at high pressure.
+        rho_std = (P_ATM_BAR * 1e5 * inputs.molecular_weight) / (
+            8314.46 * 273.15 * 1.0   # P_std = 1.01325 bar, T_std = 273.15 K, Z = 1
         )
         W_kgh = q * rho_std
         Q_m3h = W_kgh / rho1 if rho1 > 0 else q
@@ -395,7 +397,10 @@ def _size_liquid(
 
     # ── Vena contracta pressure ──────────────────────────────────────────────
     P_vc = P1 - delta_P_eff / FL ** 2
-    is_flashing = P_vc < Pv
+    # FLASHING: vapor persists downstream → both P_vc AND P2 are below Pv
+    # CAVITATION: vapor forms at VC but collapses → P_vc < Pv, P2 >= Pv
+    # Bug was: is_flashing = P_vc < Pv  (ignored P2, misclassified cavitation)
+    is_flashing = (P_vc < Pv) and (P2 < Pv)
 
     # ── Viscous correction ────────────────────────────────────────────────────
     FR, Rev = _viscous_correction(Q_m3h, d_mm, mu_cP, Gf, FL, inputs.Fd)
@@ -415,9 +420,11 @@ def _size_liquid(
     result.Cv_required = round(Cv, 4)
 
     # ── Cavitation result ─────────────────────────────────────────────────────
+    # Cavitation sigma thresholds (approximate, IEC 60534-8-4)
     sigma = (P1 - Pv) / max(delta_P, 1e-9)
-    sigma_incipient = 1.0 / (FL ** 2)
-    sigma_choked = 1.0 / FL ** 2  # simplified; real value depends on Fd
+    sigma_incipient = 1.0 / (FL ** 2)          # onset of bubble formation
+    sigma_constant  = 0.5 / (FL ** 2)          # constant cavitation regime
+    sigma_choked    = (1.0 - FF) / (FL ** 2)   # fully choked / maximum damage
 
     if is_flashing:
         regime = CavitationRegime.FLASHING
@@ -425,7 +432,7 @@ def _size_liquid(
     elif is_choked:
         regime = CavitationRegime.CHOKED
         severity = "Choked cavitation — severe bubble collapse. Anti-cavitation trim required."
-    elif sigma < sigma_incipient * 0.5:
+    elif sigma < sigma_constant:
         regime = CavitationRegime.CONSTANT
         severity = "Constant cavitation — significant bubble collapse. Anti-cavitation trim recommended."
     elif sigma < sigma_incipient:
@@ -435,7 +442,7 @@ def _size_liquid(
         regime = CavitationRegime.NONE
         severity = "No cavitation predicted."
 
-    delta_P_incipient = (P1 - Pv) * (1.0 - 1.0 / sigma_incipient)
+    delta_P_incipient = (P1 - Pv) / sigma_incipient
 
     result.cavitation = CavitationResult(
         regime=regime,
