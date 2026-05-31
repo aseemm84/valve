@@ -21,8 +21,8 @@ import streamlit as st
 
 DEVELOPER_NAME: str  = "Aseem Mehrotra"
 LINKEDIN_URL: str    = "https://www.linkedin.com/in/aseem-mehrotra/"
-GITHUB_URL: str      = "https://github.com/aseemm84/Control-Valve"
-APP_URL: str         = "https://control-valve-sizing.streamlit.app/"
+GITHUB_URL: str      = "https://github.com/aseemm84/valve"
+APP_URL: str         = "https://sizing.streamlit.app/"
 APP_VERSION: str     = "2.0.0"
 
 # ── Colour palette ─────────────────────────────────────────────────────────
