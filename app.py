@@ -35,7 +35,7 @@ Run
 Developer
 ---------
 Aseem Mehrotra | https://www.linkedin.com/in/aseem-mehrotra/
-GitHub         | https://github.com/aseemm84/Control-Valve
+GitHub         | https://github.com/aseemm84/valve
 """
 
 from __future__ import annotations
@@ -98,8 +98,8 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
-        "Get help": "https://github.com/aseemm84/Control-Valve",
-        "Report a bug": "https://github.com/aseemm84/Control-Valve/issues",
+        "Get help": "https://github.com/aseemm84/valve",
+        "Report a bug": "https://github.com/aseemm84/valve/issues",
         "About": (
             "### Control Valve Sizer v2.0\n"
             "Professional sizing per **IEC 60534-2-1:2011** and **ISA-75.01.01-2012**.\n\n"
