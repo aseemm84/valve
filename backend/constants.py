@@ -17,9 +17,16 @@ from __future__ import annotations
 # ---------------------------------------------------------------------------
 # IEC 60534-2-1 N-factors (Table 1)
 # ---------------------------------------------------------------------------
+# IMPORTANT: Two sets exist — one for pressure in kPa, one for pressure in bar.
+# This application stores all pressures in bar a internally, so the bar-based
+# N-factors are used throughout the sizing engine.
+#
+# Cross-check: N1_bar = N1_kPa × √100 = N1_kPa × 10
+#              N6_bar = N6_kPa × √100 = N6_kPa × 10
+# ---------------------------------------------------------------------------
 
 # N-factors for LIQUID sizing  (Q in m³/h, W in kg/h)
-N1_SI: float = 0.0865   # Q [m³/h], ΔP [bar],  Cv → N1·Fp·Cv·√(ΔP/Gf)
+N1_SI: float = 0.865    # Q [m³/h], ΔP [bar],  Cv  — IEC 60534-2-1 Table 1 (bar row)
 N1_US: float = 1.00     # Q [GPM],  ΔP [psia]
 
 N2_SI: float = 0.00214  # Fp piping correction  (d in mm)
@@ -32,20 +39,20 @@ N5_SI: float = 0.00241  # Fp piping correction — pipe diameter term (d in mm)
 N5_US: float = 1000.0   # Fp piping correction — pipe diameter term (d in in)
 
 # N-factors for GAS / VAPOUR sizing  (W in kg/h, Q in m³/h)
-N6_SI: float = 2.73     # mass flow W [kg/h], P1 [bar a], rho1 [kg/m³]
-N6_US: float = 63.3     # mass flow W [lb/h],  P1 [psia], rho1 [lb/ft³]
+N6_SI: float = 27.3     # mass flow W [kg/h],  P1 [bar a], rho1 [kg/m³]
+N6_US: float = 63.3     # mass flow W [lb/h],  P1 [psia],  rho1 [lb/ft³]
 
-N7_SI: float = 4.17     # volumetric flow Q [m³/h at std conditions], P1 [bar a]
-N7_US: float = 1360.0   # volumetric flow Q [SCFH], P1 [psia]
+N7_SI: float = 417.0    # volumetric Q [m³/h at std], P1 [bar a]
+N7_US: float = 1360.0   # volumetric Q [SCFH],        P1 [psia]
 
-N8_SI: float = 0.948    # mass flow W [kg/h], P1 [bar a], T1 [K], M [g/mol]
-N8_US: float = 19.3     # mass flow W [lb/h],  P1 [psia], T1 [°R]
+N8_SI: float = 94.8     # mass W [kg/h], P1 [bar a], T1 [K], M [g/mol]
+N8_US: float = 19.3     # mass W [lb/h], P1 [psia],  T1 [°R]
 
-N9_SI: float = 21.2     # standard volumetric Q [m³/h], P1 [bar a], T1 [K]
-N9_US: float = 7320.0   # standard volumetric Q [SCFH],  P1 [psia], T1 [°R]
+N9_SI: float = 2120.0   # standard volumetric Q [m³/h], P1 [bar a], T1 [K]
+N9_US: float = 7320.0   # standard volumetric Q [SCFH],  P1 [psia],  T1 [°R]
 
 # N-factor for STEAM sizing
-N6_STEAM_SI: float = 2.73   # Same N6 applies; density from IAPWS-IF97
+N6_STEAM_SI: float = 27.3   # Same N6 applies; density from IAPWS-IF97
 
 # ---------------------------------------------------------------------------
 # Physical constants
