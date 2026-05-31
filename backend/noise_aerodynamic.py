@@ -26,6 +26,14 @@ correlation adopted verbatim into IEC 60534-8-3:
 
 with η_0 = 10⁻⁴, M_crit = 0.3, k ≈ 1 (from IEC 60534-8-3 §5.3).
 
+Bug fix (v2.1)
+--------------
+NoiseResult constructor now uses the correct field name ``limit_dba``
+(matching the Pydantic model definition) rather than the erroneous
+``noise_limit_dba`` keyword argument that caused the noise-limit
+exceedance flag to always evaluate against the default 85 dB(A)
+regardless of user input.
+
 References
 ----------
 IEC 60534-8-3:2011 — Industrial-process control valves — Noise considerations
@@ -84,9 +92,6 @@ def _acoustic_efficiency(Mvc: float) -> float:
 
     Notes
     -----
-    **This is the key fix in v2.0.**  The previous constant η_a = 10⁻⁴ is
-    replaced by the Mach-dependent Baumann correlation.
-
     For Mvc ≤ M_crit (0.3):
         η_a = η_0 × Mvc^3.6
 
@@ -162,7 +167,9 @@ def _mach_at_vena_contracta(
             # Expansion rather than compression — this shouldn't happen
             Mvc = 0.01
         else:
-            Mach_sq = (2.0 / (gamma - 1.0)) * ((1.0 / pressure_ratio) ** ((gamma - 1.0) / gamma) - 1.0)
+            Mach_sq = (2.0 / (gamma - 1.0)) * (
+                (1.0 / pressure_ratio) ** ((gamma - 1.0) / gamma) - 1.0
+            )
             Mvc = math.sqrt(max(Mach_sq, 0.0))
 
     return Mvc, is_sonic
@@ -249,13 +256,9 @@ def _pipe_transmission_loss(
     """
     Pipe wall transmission loss TL [dB] (IEC 60534-8-3 §5.6).
 
-    The simplified IEC formula for a cylindrical steel pipe:
+    Simplified mass-law formula at the dominant frequency:
 
-        TL = 10 log₁₀[(ρ_pipe × c_pipe × t) / (ρ_air × c_air × Di/2)]² × f_corr
-
-    A simplified version commonly used in practice:
-
-        TL = 10 log₁₀[((ρ_s × c_s)² × t²) / (ρ_air × c_air × π × Di × f)]
+        TL = 10 log₁₀[(ρ_pipe × c_pipe × t)² / (ρ_air × c_air × π × Di × f)]
 
     Parameters
     ----------
@@ -284,6 +287,7 @@ def _pipe_transmission_loss(
     IEC 60534-8-3 provides a frequency-band approach.  This function
     computes TL at the dominant frequency, consistent with the standard's
     simplified method (single-frequency approximation for the A-weighted SPL).
+    Physical bounds: TL typically 20–60 dB for steel pipe.
     """
     if Di_m <= 0 or t_m <= 0:
         return 30.0  # default if geometry unknown
@@ -412,10 +416,6 @@ def calculate_aerodynamic_noise(
     """
     Full IEC 60534-8-3:2011 aerodynamic noise calculation chain.
 
-    This is the corrected v2.0 implementation.  The key fix is that
-    acoustic efficiency η_a is now computed from the Mach-dependent
-    Baumann correlation instead of a fixed constant.
-
     Parameters
     ----------
     mass_flow_kgs : float
@@ -456,14 +456,19 @@ def calculate_aerodynamic_noise(
 
     Step 1  Mechanical stream power Wm [W]
     Step 2  Vena contracta Mach number Mvc
-    Step 3  Acoustic efficiency η_a = f(Mvc)          ← KEY FIX v2.0
+    Step 3  Acoustic efficiency η_a = f(Mvc)          ← Baumann/IEC correlation
     Step 4  Internal acoustic power Wa = η_a × Wm
     Step 5  Internal SPL: Lpi = 10 log₁₀(Wa / W_ref)
     Step 6  Peak frequency fp
     Step 7  Pipe wall TL (at fp)
     Step 8  External SPL: Lpe = Lpi – TL + A_weighting(fp)
+
+    Bug fix v2.1: NoiseResult is now constructed with the correct field name
+    ``limit_dba`` (not the erroneous ``noise_limit_dba``).  This ensures the
+    noise-limit exceedance flag correctly reflects the user-specified limit.
     """
-    result = NoiseResult(noise_limit_dba=noise_limit_dba)
+    # ── BUG 1 FIX: use field name 'limit_dba' (matches NoiseResult model) ──
+    result = NoiseResult(limit_dba=noise_limit_dba)
 
     # -- Convert to SI base units ────────────────────────────────────────────
     P1_Pa = P1_bara * 1.0e5
@@ -486,7 +491,7 @@ def calculate_aerodynamic_noise(
     result.Mvc = Mvc
     result.is_sonic = is_sonic
 
-    # ── Step 3: Acoustic efficiency (Mach-dependent — THE FIX) ─────────────
+    # ── Step 3: Acoustic efficiency (Mach-dependent — Baumann/IEC 8-3) ─────
     eta_a = _acoustic_efficiency(Mvc)
     result.eta_acoustic = eta_a
 
@@ -544,13 +549,16 @@ def _estimate_wall_thickness(D_mm: float, schedule: str) -> float:
     """
     # Schedule multiplier (wall fraction of OD)
     schedule_factors: dict[str, float] = {
-        "Sch 10": 0.040,
-        "Sch 20": 0.050,
-        "Sch 40": 0.070,
-        "Sch 80": 0.110,
+        "Sch 10S": 0.030,
+        "Sch 10":  0.030,
+        "Sch 20":  0.050,
+        "Sch STD": 0.060,
+        "Sch 40":  0.070,
+        "Sch XH":  0.090,
+        "Sch 80":  0.110,
         "Sch 120": 0.140,
         "Sch 160": 0.175,
-        "XXH": 0.220,
+        "XXH":     0.220,
     }
     factor = 0.070  # default Sch 40
     for key, val in schedule_factors.items():
