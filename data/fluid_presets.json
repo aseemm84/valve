@@ -1,0 +1,654 @@
+{
+  "_comment": "Control Valve Sizer — Fluid Presets Library v2.0",
+  "_units": {
+    "rho_kgm3": "kg/m3 at reference T and 1 atm (liquid) or ideal gas",
+    "Gf": "Specific gravity relative to water at 15.6 C",
+    "Pv_bara": "Vapour pressure at reference T [bar a]",
+    "Pc_bara": "Critical pressure [bar a]",
+    "mu_cP": "Dynamic viscosity at reference T [cP]",
+    "M_gmol": "Molecular weight [g/mol]",
+    "gamma": "Cp/Cv (gas only)",
+    "Z": "Compressibility at reference conditions (gas only)",
+    "ref_T_C": "Reference temperature for tabulated properties [deg C]"
+  },
+
+  "Utilities": [
+    {
+      "name": "Water",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.998,
+      "rho_kgm3": 998.2,
+      "Pv_bara": 0.023,
+      "Pc_bara": 220.64,
+      "mu_cP": 1.002,
+      "notes": "Pure water at 20 C"
+    },
+    {
+      "name": "Saturated Steam (10 bar g)",
+      "phase": "Steam",
+      "ref_T_C": 184,
+      "notes": "Use Steam phase — IAPWS-IF97 provides all properties automatically"
+    },
+    {
+      "name": "Air",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 28.97,
+      "gamma": 1.40,
+      "Z": 1.00,
+      "rho_kgm3": 1.204,
+      "notes": "Dry air at 20 C, 1 atm"
+    },
+    {
+      "name": "Nitrogen (N2)",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 28.014,
+      "gamma": 1.40,
+      "Z": 1.00,
+      "rho_kgm3": 1.165,
+      "notes": "Industrial nitrogen"
+    },
+    {
+      "name": "Oxygen (O2)",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 32.00,
+      "gamma": 1.40,
+      "Z": 0.999,
+      "rho_kgm3": 1.331,
+      "notes": "Gaseous oxygen"
+    },
+    {
+      "name": "Carbon Dioxide (CO2)",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 44.01,
+      "gamma": 1.30,
+      "Z": 0.994,
+      "rho_kgm3": 1.842,
+      "notes": "CO2 at near-atmospheric conditions; Z varies significantly at higher pressures"
+    },
+    {
+      "name": "Hydrogen (H2)",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 2.016,
+      "gamma": 1.41,
+      "Z": 1.001,
+      "rho_kgm3": 0.0838,
+      "notes": "Gaseous hydrogen — light gas; high velocity concern"
+    },
+    {
+      "name": "Instrument Air",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 28.97,
+      "gamma": 1.40,
+      "Z": 1.00,
+      "rho_kgm3": 1.204,
+      "notes": "Dry compressed air"
+    },
+    {
+      "name": "Cooling Water (30 C)",
+      "phase": "Liquid",
+      "ref_T_C": 30,
+      "Gf": 0.996,
+      "rho_kgm3": 995.7,
+      "Pv_bara": 0.042,
+      "Pc_bara": 220.64,
+      "mu_cP": 0.798,
+      "notes": "Cooling water, moderately warm"
+    },
+    {
+      "name": "Demineralised Water",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 0.997,
+      "rho_kgm3": 997.0,
+      "Pv_bara": 0.032,
+      "Pc_bara": 220.64,
+      "mu_cP": 0.890,
+      "notes": "Demin water / boiler feed water"
+    }
+  ],
+
+  "Hydrocarbons_Liquid": [
+    {
+      "name": "Crude Oil (Light, API 40)",
+      "phase": "Liquid",
+      "ref_T_C": 15,
+      "Gf": 0.825,
+      "rho_kgm3": 825.0,
+      "Pv_bara": 0.12,
+      "Pc_bara": 25.0,
+      "mu_cP": 5.0,
+      "notes": "Approximate; actual properties vary by crude assay"
+    },
+    {
+      "name": "Crude Oil (Medium, API 30)",
+      "phase": "Liquid",
+      "ref_T_C": 15,
+      "Gf": 0.876,
+      "rho_kgm3": 876.0,
+      "Pv_bara": 0.08,
+      "Pc_bara": 22.0,
+      "mu_cP": 15.0,
+      "notes": "Medium crude"
+    },
+    {
+      "name": "Heavy Fuel Oil (HFO)",
+      "phase": "Liquid",
+      "ref_T_C": 100,
+      "Gf": 0.980,
+      "rho_kgm3": 980.0,
+      "Pv_bara": 0.001,
+      "Pc_bara": 20.0,
+      "mu_cP": 120.0,
+      "notes": "HFO at 100 C; requires viscosity correction (FR factor)"
+    },
+    {
+      "name": "Diesel / Gas Oil",
+      "phase": "Liquid",
+      "ref_T_C": 15,
+      "Gf": 0.840,
+      "rho_kgm3": 840.0,
+      "Pv_bara": 0.0015,
+      "Pc_bara": 22.0,
+      "mu_cP": 3.5,
+      "notes": "Automotive diesel / gas oil"
+    },
+    {
+      "name": "Kerosene / Jet Fuel (Jet A)",
+      "phase": "Liquid",
+      "ref_T_C": 15,
+      "Gf": 0.800,
+      "rho_kgm3": 800.0,
+      "Pv_bara": 0.003,
+      "Pc_bara": 23.0,
+      "mu_cP": 1.8,
+      "notes": "Aviation kerosene"
+    },
+    {
+      "name": "Gasoline (Petrol)",
+      "phase": "Liquid",
+      "ref_T_C": 15,
+      "Gf": 0.740,
+      "rho_kgm3": 740.0,
+      "Pv_bara": 0.55,
+      "Pc_bara": 30.0,
+      "mu_cP": 0.60,
+      "notes": "Motor gasoline — check flashing risk"
+    },
+    {
+      "name": "Naphtha",
+      "phase": "Liquid",
+      "ref_T_C": 15,
+      "Gf": 0.720,
+      "rho_kgm3": 720.0,
+      "Pv_bara": 0.40,
+      "Pc_bara": 30.0,
+      "mu_cP": 0.55,
+      "notes": "Light naphtha"
+    },
+    {
+      "name": "Liquefied Petroleum Gas LPG (Propane)",
+      "phase": "Liquid",
+      "ref_T_C": 15,
+      "Gf": 0.507,
+      "rho_kgm3": 507.0,
+      "Pv_bara": 7.49,
+      "Pc_bara": 42.5,
+      "mu_cP": 0.11,
+      "notes": "Propane at 15 C — high vapour pressure; flashing very likely"
+    },
+    {
+      "name": "LPG Butane (n-Butane)",
+      "phase": "Liquid",
+      "ref_T_C": 15,
+      "Gf": 0.601,
+      "rho_kgm3": 601.0,
+      "Pv_bara": 2.04,
+      "Pc_bara": 37.96,
+      "mu_cP": 0.17,
+      "notes": "Normal butane at 15 C"
+    },
+    {
+      "name": "Condensate (NGL)",
+      "phase": "Liquid",
+      "ref_T_C": 15,
+      "Gf": 0.755,
+      "rho_kgm3": 755.0,
+      "Pv_bara": 0.30,
+      "Pc_bara": 28.0,
+      "mu_cP": 0.70,
+      "notes": "Natural gas condensate — approximate"
+    },
+    {
+      "name": "Benzene",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.879,
+      "rho_kgm3": 879.0,
+      "Pv_bara": 0.100,
+      "Pc_bara": 48.9,
+      "mu_cP": 0.65,
+      "notes": "Benzene at 20 C — toxic; use appropriate safety factors"
+    },
+    {
+      "name": "Toluene",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.867,
+      "rho_kgm3": 867.0,
+      "Pv_bara": 0.029,
+      "Pc_bara": 41.0,
+      "mu_cP": 0.59,
+      "notes": "Toluene at 20 C"
+    },
+    {
+      "name": "Xylene (Mixed)",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.864,
+      "rho_kgm3": 864.0,
+      "Pv_bara": 0.009,
+      "Pc_bara": 35.1,
+      "mu_cP": 0.65,
+      "notes": "Mixed xylenes at 20 C"
+    }
+  ],
+
+  "Hydrocarbons_Gas": [
+    {
+      "name": "Natural Gas (Typical)",
+      "phase": "Gas",
+      "ref_T_C": 15,
+      "M_gmol": 17.0,
+      "gamma": 1.31,
+      "Z": 0.998,
+      "rho_kgm3": 0.714,
+      "notes": "Typical pipeline natural gas — composition varies"
+    },
+    {
+      "name": "Methane (CH4)",
+      "phase": "Gas",
+      "ref_T_C": 15,
+      "M_gmol": 16.04,
+      "gamma": 1.31,
+      "Z": 0.998,
+      "rho_kgm3": 0.677,
+      "notes": "Pure methane"
+    },
+    {
+      "name": "Ethane (C2H6)",
+      "phase": "Gas",
+      "ref_T_C": 15,
+      "M_gmol": 30.07,
+      "gamma": 1.20,
+      "Z": 0.993,
+      "rho_kgm3": 1.264,
+      "notes": "Ethane at near-atmospheric"
+    },
+    {
+      "name": "Propane (Gas Phase)",
+      "phase": "Gas",
+      "ref_T_C": 50,
+      "M_gmol": 44.10,
+      "gamma": 1.15,
+      "Z": 0.980,
+      "rho_kgm3": 1.882,
+      "notes": "Propane vapour at 50 C, 1 atm"
+    },
+    {
+      "name": "Hydrogen Sulfide (H2S)",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 34.08,
+      "gamma": 1.32,
+      "Z": 0.996,
+      "rho_kgm3": 1.434,
+      "notes": "H2S — highly toxic; HAZOP required"
+    },
+    {
+      "name": "Flare Gas (Typical)",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 20.0,
+      "gamma": 1.30,
+      "Z": 0.995,
+      "rho_kgm3": 0.840,
+      "notes": "Approximate flare header gas"
+    }
+  ],
+
+  "Refrigerants": [
+    {
+      "name": "R-134a (Liquid)",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 1.206,
+      "rho_kgm3": 1206.0,
+      "Pv_bara": 6.64,
+      "Pc_bara": 40.57,
+      "mu_cP": 0.197,
+      "notes": "HFC refrigerant — check flashing"
+    },
+    {
+      "name": "R-410A (Liquid)",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 1.064,
+      "rho_kgm3": 1064.0,
+      "Pv_bara": 16.37,
+      "Pc_bara": 49.02,
+      "mu_cP": 0.115,
+      "notes": "HFC blend R-32/R-125; very high Pv"
+    },
+    {
+      "name": "R-22 (Chlorodifluoromethane)",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 1.194,
+      "rho_kgm3": 1194.0,
+      "Pv_bara": 10.43,
+      "Pc_bara": 49.9,
+      "mu_cP": 0.165,
+      "notes": "HCFC — phase-out in progress"
+    },
+    {
+      "name": "Ammonia (NH3, Liquid)",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.610,
+      "rho_kgm3": 610.0,
+      "Pv_bara": 8.57,
+      "Pc_bara": 113.3,
+      "mu_cP": 0.140,
+      "notes": "Liquid ammonia — toxic; high Pv; check flashing"
+    },
+    {
+      "name": "Ammonia (NH3, Gas)",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 17.03,
+      "gamma": 1.31,
+      "Z": 0.990,
+      "rho_kgm3": 0.717,
+      "notes": "Gaseous ammonia"
+    }
+  ],
+
+  "Cryogenics": [
+    {
+      "name": "Liquid Nitrogen (LN2)",
+      "phase": "Liquid",
+      "ref_T_C": -196,
+      "Gf": 0.808,
+      "rho_kgm3": 808.0,
+      "Pv_bara": 1.013,
+      "Pc_bara": 33.96,
+      "mu_cP": 0.158,
+      "notes": "LN2 at normal boiling point — extremely cold; insulated piping required"
+    },
+    {
+      "name": "Liquid Oxygen (LOX)",
+      "phase": "Liquid",
+      "ref_T_C": -183,
+      "Gf": 1.141,
+      "rho_kgm3": 1141.0,
+      "Pv_bara": 1.013,
+      "Pc_bara": 50.43,
+      "mu_cP": 0.195,
+      "notes": "LOX — fire/explosion hazard; special material selection required"
+    },
+    {
+      "name": "LNG (Liquefied Natural Gas)",
+      "phase": "Liquid",
+      "ref_T_C": -162,
+      "Gf": 0.430,
+      "rho_kgm3": 430.0,
+      "Pv_bara": 1.013,
+      "Pc_bara": 46.0,
+      "mu_cP": 0.120,
+      "notes": "LNG at approx boiling point; composition varies"
+    },
+    {
+      "name": "Liquid Argon (LAr)",
+      "phase": "Liquid",
+      "ref_T_C": -186,
+      "Gf": 1.394,
+      "rho_kgm3": 1394.0,
+      "Pv_bara": 1.013,
+      "Pc_bara": 48.65,
+      "mu_cP": 0.260,
+      "notes": "Liquid argon at boiling point"
+    }
+  ],
+
+  "Process_Chemicals": [
+    {
+      "name": "Sulfuric Acid (98%)",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 1.834,
+      "rho_kgm3": 1834.0,
+      "Pv_bara": 0.0001,
+      "Pc_bara": 65.0,
+      "mu_cP": 25.0,
+      "notes": "Concentrated H2SO4 — corrosive; Hastelloy C or glass-lined valve required"
+    },
+    {
+      "name": "Hydrochloric Acid (35%)",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 1.175,
+      "rho_kgm3": 1175.0,
+      "Pv_bara": 0.031,
+      "Pc_bara": 83.1,
+      "mu_cP": 1.9,
+      "notes": "Muriatic acid — corrosive; titanium or PVDF body"
+    },
+    {
+      "name": "Sodium Hydroxide (50% NaOH)",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 1.525,
+      "rho_kgm3": 1525.0,
+      "Pv_bara": 0.010,
+      "Pc_bara": 220.0,
+      "mu_cP": 45.0,
+      "notes": "Caustic soda — severe corrosion at elevated T; check SCC"
+    },
+    {
+      "name": "Methanol",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.792,
+      "rho_kgm3": 792.0,
+      "Pv_bara": 0.128,
+      "Pc_bara": 80.97,
+      "mu_cP": 0.597,
+      "notes": "Methanol — toxic; flammable"
+    },
+    {
+      "name": "Ethanol (96%)",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.810,
+      "rho_kgm3": 810.0,
+      "Pv_bara": 0.059,
+      "Pc_bara": 61.48,
+      "mu_cP": 1.20,
+      "notes": "Industrial ethanol"
+    },
+    {
+      "name": "Acetic Acid (Glacial)",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 1.049,
+      "rho_kgm3": 1049.0,
+      "Pv_bara": 0.016,
+      "Pc_bara": 57.86,
+      "mu_cP": 1.22,
+      "notes": "Glacial acetic acid"
+    },
+    {
+      "name": "Ethylene Glycol (EG, 50% solution)",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 1.065,
+      "rho_kgm3": 1065.0,
+      "Pv_bara": 0.020,
+      "Pc_bara": 77.0,
+      "mu_cP": 3.5,
+      "notes": "50% EG / water antifreeze"
+    },
+    {
+      "name": "Chlorine (Cl2, Liquid)",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 1.408,
+      "rho_kgm3": 1408.0,
+      "Pv_bara": 6.86,
+      "Pc_bara": 77.1,
+      "mu_cP": 0.345,
+      "notes": "Liquid chlorine — toxic; high Pv; Hastelloy C required"
+    },
+    {
+      "name": "Chlorine (Cl2, Gas)",
+      "phase": "Gas",
+      "ref_T_C": 20,
+      "M_gmol": 70.9,
+      "gamma": 1.34,
+      "Z": 0.985,
+      "rho_kgm3": 2.994,
+      "notes": "Chlorine gas — toxic; corrosive; Hastelloy required"
+    },
+    {
+      "name": "Phosphoric Acid (85%)",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 1.685,
+      "rho_kgm3": 1685.0,
+      "Pv_bara": 0.0005,
+      "Pc_bara": 70.0,
+      "mu_cP": 85.0,
+      "notes": "Concentrated phosphoric acid — corrosive; high viscosity; FR correction needed"
+    },
+    {
+      "name": "Styrene",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.906,
+      "rho_kgm3": 906.0,
+      "Pv_bara": 0.007,
+      "Pc_bara": 38.4,
+      "mu_cP": 0.76,
+      "notes": "Styrene monomer — polymerisation inhibitor required; low Pv"
+    },
+    {
+      "name": "Acetone",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.791,
+      "rho_kgm3": 791.0,
+      "Pv_bara": 0.243,
+      "Pc_bara": 47.0,
+      "mu_cP": 0.316,
+      "notes": "Acetone — highly flammable"
+    },
+    {
+      "name": "Vinyl Chloride Monomer (VCM)",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.911,
+      "rho_kgm3": 911.0,
+      "Pv_bara": 3.41,
+      "Pc_bara": 52.0,
+      "mu_cP": 0.21,
+      "notes": "VCM — carcinogen; high Pv; flashing risk"
+    },
+    {
+      "name": "Ethylene Oxide",
+      "phase": "Liquid",
+      "ref_T_C": 20,
+      "Gf": 0.887,
+      "rho_kgm3": 887.0,
+      "Pv_bara": 1.46,
+      "Pc_bara": 71.9,
+      "mu_cP": 0.40,
+      "notes": "EO — highly reactive; explosive decomposition risk"
+    },
+    {
+      "name": "Diethylene Glycol (DEG)",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 1.118,
+      "rho_kgm3": 1118.0,
+      "Pv_bara": 0.0002,
+      "Pc_bara": 47.0,
+      "mu_cP": 30.2,
+      "notes": "DEG — high viscosity; FR correction needed"
+    },
+    {
+      "name": "Monoethanolamine (MEA, 30%)",
+      "phase": "Liquid",
+      "ref_T_C": 40,
+      "Gf": 1.010,
+      "rho_kgm3": 1010.0,
+      "Pv_bara": 0.028,
+      "Pc_bara": 60.0,
+      "mu_cP": 2.2,
+      "notes": "MEA amine solution — CO2 absorption service"
+    }
+  ],
+
+  "Slurries_and_Viscous": [
+    {
+      "name": "Kaolin Slurry (30% solids)",
+      "phase": "Liquid",
+      "ref_T_C": 25,
+      "Gf": 1.18,
+      "rho_kgm3": 1180.0,
+      "Pv_bara": 0.032,
+      "Pc_bara": 220.0,
+      "mu_cP": 50.0,
+      "notes": "Clay slurry — abrasive; hard-faced trim required; high viscosity"
+    },
+    {
+      "name": "Polymer Melt (PE, at 200 C)",
+      "phase": "Liquid",
+      "ref_T_C": 200,
+      "Gf": 0.780,
+      "rho_kgm3": 780.0,
+      "Pv_bara": 0.001,
+      "Pc_bara": 40.0,
+      "mu_cP": 5000.0,
+      "notes": "Approximate polyethylene melt — extremely viscous; FR correction essential"
+    },
+    {
+      "name": "Crude Palm Oil (CPO)",
+      "phase": "Liquid",
+      "ref_T_C": 60,
+      "Gf": 0.889,
+      "rho_kgm3": 889.0,
+      "Pv_bara": 0.0001,
+      "Pc_bara": 20.0,
+      "mu_cP": 28.0,
+      "notes": "Palm oil at 60 C"
+    },
+    {
+      "name": "Bitumen / Asphalt (at 160 C)",
+      "phase": "Liquid",
+      "ref_T_C": 160,
+      "Gf": 1.020,
+      "rho_kgm3": 1020.0,
+      "Pv_bara": 0.001,
+      "Pc_bara": 20.0,
+      "mu_cP": 800.0,
+      "notes": "Hot bitumen — very high viscosity; FR correction essential; specialised valve"
+    }
+  ]
+}

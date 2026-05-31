@@ -1,0 +1,35 @@
+# Control Valve Sizer v2.0
+# Production dependencies
+# Install: pip install -r requirements.txt
+#
+# Python >= 3.10 required
+
+# ── Core framework ─────────────────────────────────────────────────────────
+streamlit
+
+# ── Data models & validation ────────────────────────────────────────────────
+pydantic
+
+# ── Scientific computing ────────────────────────────────────────────────────
+# (only stdlib math is used for sizing; numpy for noise optional)
+
+# ── Steam properties (IAPWS-IF97) ───────────────────────────────────────────
+# Required for Steam phase sizing. If absent, steam service is gracefully
+# disabled and a warning is shown.
+iapws
+
+# ── Charting ────────────────────────────────────────────────────────────────
+plotly
+
+# ── Data handling (comparison table CSV, Excel) ──────────────────────────────
+pandas
+
+# ── Report generation ───────────────────────────────────────────────────────
+# PDF reports
+fpdf2
+
+# Excel reports
+openpyxl
+
+# ── JSON / standard library ─────────────────────────────────────────────────
+# json, math, pathlib — all stdlib (no extra install)
