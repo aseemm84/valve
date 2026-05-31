@@ -43,8 +43,23 @@ MIDGREEN  = "#70ad47"
 GOLD      = "#ffd700"
 
 
-def _base_layout(title: str, xaxis_title: str = "", yaxis_title: str = "") -> dict:
-    """Return a consistent plotly layout dict."""
+def _base_layout(
+    title: str,
+    xaxis_title: str = "",
+    yaxis_title: str = "",
+    showlegend: bool = True,
+) -> dict:
+    """Return a consistent plotly layout dict.
+
+    Parameters
+    ----------
+    showlegend : bool
+        Pass False for charts that have no traces requiring a legend
+        (e.g. single-series tornado bar).  Default True.
+        Accepting this here avoids passing `showlegend` as *both* a
+        keyword argument AND inside **_base_layout(), which would raise
+        a duplicate-keyword TypeError in Python.
+    """
     return dict(
         title=dict(text=title, font=dict(size=14, color=PRIMARY), x=0.5),
         xaxis_title=xaxis_title,
@@ -53,7 +68,7 @@ def _base_layout(title: str, xaxis_title: str = "", yaxis_title: str = "") -> di
         paper_bgcolor="#ffffff",
         font=dict(family="Segoe UI, Arial, sans-serif", size=12),
         margin=dict(l=50, r=30, t=50, b=50),
-        showlegend=True,
+        showlegend=showlegend,
         legend=dict(
             bgcolor="rgba(255,255,255,0.9)",
             bordercolor="#d1d9e0",
@@ -493,10 +508,10 @@ def plot_sensitivity_tornado(
     fig.update_layout(
         **_base_layout(
             f"Sensitivity to: {swept_parameter}",
-            "Normalised Sensitivity Index |∂Output/∂Input|",
+            "Normalised Sensitivity Index |dOutput/dInput|",
             "",
-        ),
-        showlegend=False,
+            showlegend=False,
+        )
     )
     fig.update_xaxes(range=[0, max(values) * 1.25 if values else 2.0])
     return fig
@@ -621,9 +636,9 @@ def plot_rangeability_bar(
     )
 
     fig.update_layout(
-        **_base_layout("Valve Cv Rangeability Analysis", "Flow Coefficient Cv", ""),
+        **_base_layout("Valve Cv Rangeability Analysis", "Flow Coefficient Cv", "",
+                       showlegend=True),
         barmode="stack",
-        showlegend=True,
         height=250,
     )
     fig.update_yaxes(showticklabels=False)
