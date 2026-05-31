@@ -532,95 +532,115 @@ def main() -> None:
     # TAB 6 — INSTALLED CHARACTERISTIC CURVE  (v2.0)
     # =========================================================================
     with tab_installed:
-        if not st.session_state["calc_attempted"]:
-            _not_calculated_info("Installed Characteristic")
-        else:
-            result, inputs_model = _result_guard()
-            if result is not None and inputs_model is not None:
-                render_installed_characteristic(result, inputs_model)
+        try:
+            if not st.session_state["calc_attempted"]:
+                _not_calculated_info("Installed Characteristic")
+            else:
+                result, inputs_model = _result_guard()
+                if result is not None and inputs_model is not None:
+                    render_installed_characteristic(result, inputs_model)
+        except Exception as _tab_err:
+            st.error(f"Tab error — {_tab_err}")
 
     # =========================================================================
     # TAB 7 — SENSITIVITY / WHAT-IF  (v2.0)
     # =========================================================================
     with tab_sensitivity:
-        if not st.session_state["calc_attempted"]:
-            _not_calculated_info("Sensitivity Analysis")
-        else:
-            result, inputs_model = _result_guard()
-            if result is not None and inputs_model is not None:
-                render_sensitivity(
-                    result=result,
-                    inputs=inputs_model,
-                    orchestrator_fn=run_sizing,   # pass as dependency (no circular import)
-                )
+        try:
+            if not st.session_state["calc_attempted"]:
+                _not_calculated_info("Sensitivity Analysis")
+            else:
+                result, inputs_model = _result_guard()
+                if result is not None and inputs_model is not None:
+                    render_sensitivity(
+                        result=result,
+                        inputs=inputs_model,
+                        orchestrator_fn=run_sizing,
+                    )
+        except Exception as _tab_err:
+            st.error(f"Tab error — {_tab_err}")
 
     # =========================================================================
     # TAB 8 — RANGEABILITY & TURNDOWN  (v2.0)
     # =========================================================================
     with tab_rangeability:
-        if not st.session_state["calc_attempted"]:
-            _not_calculated_info("Rangeability Analysis")
-        else:
-            result, inputs_model = _result_guard()
-            if result is not None and inputs_model is not None:
-                render_rangeability(result, inputs_model)
+        try:
+            if not st.session_state["calc_attempted"]:
+                _not_calculated_info("Rangeability Analysis")
+            else:
+                result, inputs_model = _result_guard()
+                if result is not None and inputs_model is not None:
+                    render_rangeability(result, inputs_model)
+        except Exception as _tab_err:
+            st.error(f"Tab error — {_tab_err}")
 
     # =========================================================================
     # TAB 9 — VALVE BODY & TRIM SELECTION GUIDE  (v2.0)
     # =========================================================================
     with tab_valve_guide:
-        if not st.session_state["calc_attempted"]:
-            _not_calculated_info("Valve Selection Guide")
-        else:
-            result, inputs_model = _result_guard()
-            if result is not None and inputs_model is not None:
-                render_valve_guide(result, inputs_model)
+        try:
+            if not st.session_state["calc_attempted"]:
+                _not_calculated_info("Valve Selection Guide")
+            else:
+                result, inputs_model = _result_guard()
+                if result is not None and inputs_model is not None:
+                    render_valve_guide(result, inputs_model)
+        except Exception as _tab_err:
+            st.error(f"Tab error — {_tab_err}")
 
     # =========================================================================
     # TAB 10 — ACTUATOR SIZING GUIDANCE  (v2.0)
     # =========================================================================
     with tab_actuator:
-        if not st.session_state["calc_attempted"]:
-            _not_calculated_info("Actuator Sizing")
-        else:
-            result, inputs_model = _result_guard()
-            if result is not None and inputs_model is not None:
-                render_actuator(result, inputs_model)
+        try:
+            if not st.session_state["calc_attempted"]:
+                _not_calculated_info("Actuator Sizing")
+            else:
+                result, inputs_model = _result_guard()
+                if result is not None and inputs_model is not None:
+                    render_actuator(result, inputs_model)
+        except Exception as _tab_err:
+            st.error(f"Tab error — {_tab_err}")
 
     # =========================================================================
     # TAB 11 — SAVE / LOAD  (v2.0)
     # =========================================================================
     with tab_save_load:
-        current_result  = st.session_state.get("result")
-        current_inputs  = st.session_state.get("inputs_model")
-
-        load_payload = render_save_load_panel(
-            current_inputs=current_inputs,
-            current_result=current_result,
-        )
-
-        # If a file was loaded, inject into session state so results refresh
-        if load_payload and load_payload.get("loaded_inputs"):
-            st.session_state["inputs_model"]  = load_payload["loaded_inputs"]
-            st.session_state["result"]        = load_payload["loaded_result"]
-            st.session_state["calc_attempted"] = True
-            st.session_state["calc_error"]    = None
-            st.session_state["sens_result"]   = None
-            st.rerun()
+        try:
+            load_payload = render_save_load_panel(
+                current_inputs=st.session_state.get("inputs_model"),
+                current_result=st.session_state.get("result"),
+            )
+            if load_payload and load_payload.get("loaded_inputs"):
+                st.session_state["inputs_model"]   = load_payload["loaded_inputs"]
+                st.session_state["result"]         = load_payload["loaded_result"]
+                st.session_state["calc_attempted"] = True
+                st.session_state["calc_error"]     = None
+                st.session_state["sens_result"]    = None
+                st.rerun()
+        except Exception as _tab_err:
+            st.error(f"Tab error — {_tab_err}")
 
     # =========================================================================
     # TAB 12 — MULTI-CASE COMPARISON TABLE  (v2.0)
     # =========================================================================
     with tab_compare:
-        current_result  = st.session_state.get("result")
-        current_inputs  = st.session_state.get("inputs_model")
-        render_comparison(current_result, current_inputs)
+        try:
+            render_comparison(
+                st.session_state.get("result"),
+                st.session_state.get("inputs_model"),
+            )
+        except Exception as _tab_err:
+            st.error(f"Tab error — {_tab_err}")
 
     # =========================================================================
     # TAB 13 — USER GUIDE  (v2.0)
     # =========================================================================
     with tab_user_guide:
-        render_user_guide()
+        try:
+            render_user_guide()
+        except Exception as _tab_err:
+            st.error(f"Tab error — {_tab_err}")
 
     # =========================================================================
     # PERSISTENT FOOTER  (v2.0 — LinkedIn + GitHub branding)
