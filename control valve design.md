@@ -152,7 +152,7 @@ For gas and vapour service, the equivalent of FL is the **pressure drop ratio fa
 
 $$x_T = \left(\frac{\Delta P}{P_1}\right)_{\text{choked}} \quad \text{(Eq. 2.5)}$$
 
-Like FL, xT is measured in a laboratory test (IEC 60534-2-3) and is specific to the valve style and trim. Valves with good pressure recovery (globe) have high xT (0.65–0.80); valves with poor pressure recovery (butterfly, ball) have low xT (0.25–0.40).
+Like FL, xT is measured in a laboratory test (IEC 60534-2-3) and is specific to the valve style and trim. Valves with poor pressure recovery (globe) have high xT (0.65–0.80); valves with good pressure recovery (butterfly, ball) have low xT (0.25–0.40).
 
 ### 2.5 Valve Style Modifier Fd
 
