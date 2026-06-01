@@ -45,9 +45,9 @@ A **control valve** is a power-operated device that modulates the flow of a flui
 The control valve is distinguished from a block valve or on/off valve by its ability to take a continuously variable position between fully open and fully closed. This modulating capability, combined with characterised trim, allows precise regulation of flow coefficients across a wide operating range.
 
 ```
-Process Variable ──► Transmitter ──► Controller ──► I/P Converter ──► Actuator ──► Valve
-        ▲                                                                               │
-        └───────────────────────────── Process ◄───────────────────────────────────────┘
+Process Variable ──► Transmitter ──► Controller ──► I/P Converter ──► Positioner ──► Actuator ──► Valve
+        ▲                                                                                           │
+        └───────────────────────────── Process ◄────────────────────────────────────────────────────┘
 ```
 
 ### 1.2 Control Valve Anatomy
@@ -141,8 +141,8 @@ Rearranging:
 $$P_{vc} = P_1 - \frac{P_1 - P_2}{F_L^2} \quad \text{(Eq. 2.4)}$$
 
 **Physical meaning of FL:**
-- High FL (0.85–0.95): Globe valves — good pressure recovery; the vena contracta pressure is close to the outlet pressure. Cavitation occurs at high ΔP.
-- Low FL (0.50–0.65): Ball and butterfly valves — poor pressure recovery; the vena contracta pressure is much lower than the outlet pressure. Cavitation can occur at moderate ΔP.
+- High FL (0.85–0.95): Globe valves — low pressure recovery; the vena contracta pressure is close to the outlet pressure. Cavitation occurs at high ΔP. The pressure bounces back significantly. Because $P_2$ recovers to a level relatively close to $P_1$, the overall pressure drop ($P_1 - P_2$) is small compared to the deep pressure drop at the vena contracta ($P_1 - P_{vc}$). This ratio results in a low $F_L$. Streamlined valves like ball and butterfly valves fall into this category.
+- Low FL (0.50–0.65): Ball and butterfly valves — good pressure recovery; the vena contracta pressure is much lower than the outlet pressure. Cavitation can occur at moderate ΔP. The pressure does not bounce back much; $P_2$ stays very close to $P_{vc}$. Because the overall pressure drop is almost as large as the vena contracta drop, the ratio results in a high $F_L$ (closer to 1.0). Tortuous-path valves like globe valves fall into this category.
 
 FL is determined experimentally by the valve manufacturer per IEC 60534-2-3 (flow laboratory testing) and is a function of valve type, trim style, and opening position. The values at rated (full open) conditions are tabulated in the app's valve presets.
 
