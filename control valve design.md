@@ -419,9 +419,9 @@ Note that Rev depends on Cv, making this an **implicit equation** requiring iter
 
 Gf corrects for the fluid density relative to water. Since Cv is defined for water (Gf = 1.0):
 
-- **Gf > 1.0** (denser than water, e.g., sulfuric acid Gf = 1.84): A larger Cv is needed to pass the same volumetric flow at the same ΔP. The √Gf term in the denominator of Eq. 5.5 increases, reducing Cv requirement. Wait — actually denser fluids require LESS Cv for the same volumetric flow because the momentum is higher. The equation correctly accounts for this: Cv ∝ 1/√Gf, so for Gf = 1.84, Cv reduces by factor 1/√1.84 = 0.737. But for the same *mass* flow, a denser fluid requires less volumetric flow Q, further reducing Cv.
+- **Gf > 1.0** (denser than water, e.g., sulfuric acid Gf = 1.84): A larger Cv is needed to pass the same volumetric flow at the same ΔP. Because Gf is in the denominator of the fraction under the square root in Eq. 5.5 ($\sqrt{\Delta P_{\text{eff}} / G_f}$), it algebraically means $C_v \propto \sqrt{G_f}$. Denser fluids require more energy to accelerate, so for Gf = 1.84, the required Cv increases by a factor of $\sqrt{1.84} \approx 1.35$. (Note: If sizing is based on a fixed mass flow rate instead, the higher density results in a lower volumetric flow Q, which ultimately reduces the overall required Cv.)
 
-- **Gf < 1.0** (lighter than water, e.g., LNG Gf ≈ 0.43): Cv requirement increases.
+- **Gf < 1.0** (lighter than water, e.g., LNG Gf ≈ 0.43): A smaller Cv is needed to pass the same volumetric flow at the same ΔP. The required Cv decreases by a factor of $\sqrt{0.43} \approx 0.66$.
 
 The app's fluid preset library automatically provides the correct Gf for 60+ fluids.
 
